@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.1 (2026-04-12)
+
+### Security
+
+- Update nlk to v0.5.0 — handle `guard.Wrap()` error return (tag collision defense-in-depth)
+
 ## v0.3.0 (2026-04-12)
 
 ### Improvements
