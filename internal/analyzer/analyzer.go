@@ -32,7 +32,10 @@ func Analyze(ctx context.Context, email *parser.Email, cfg *config.Config) (*Res
 
 	// 2. Build prompts (nlk/guard integrated)
 	systemPrompt, tag := llm.BuildSystemPrompt(cfg.Lang)
-	userPrompt := llm.BuildUserPrompt(tag, email, indicators)
+	userPrompt, err := llm.BuildUserPrompt(tag, email, indicators)
+	if err != nil {
+		return nil, err
+	}
 
 	// 3. LLM analysis
 	judgment, err := llm.Analyze(ctx, cfg, systemPrompt, userPrompt)

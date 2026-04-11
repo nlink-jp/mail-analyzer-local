@@ -20,7 +20,10 @@ func TestBuildUserPromptHintAuthAllPass(t *testing.T) {
 		Sender:         indicator.SenderResult{},
 	}
 
-	prompt := BuildUserPrompt(tag, email, ind)
+	prompt, err := BuildUserPrompt(tag, email, ind)
+	if err != nil {
+		t.Fatalf("BuildUserPrompt: %v", err)
+	}
 
 	if !strings.Contains(prompt, "very likely a legitimate email") {
 		t.Error("all-pass + clean sender should produce 'very likely legitimate' hint")
@@ -39,7 +42,10 @@ func TestBuildUserPromptHintAuthFail(t *testing.T) {
 		Sender:         indicator.SenderResult{},
 	}
 
-	prompt := BuildUserPrompt(tag, email, ind)
+	prompt, err := BuildUserPrompt(tag, email, ind)
+	if err != nil {
+		t.Fatalf("BuildUserPrompt: %v", err)
+	}
 
 	if strings.Contains(prompt, "likely safe") {
 		t.Error("auth all-fail must NOT produce 'likely safe' hint")
@@ -64,7 +70,10 @@ func TestBuildUserPromptHintAuthPartialFail(t *testing.T) {
 		},
 	}
 
-	prompt := BuildUserPrompt(tag, email, ind)
+	prompt, err := BuildUserPrompt(tag, email, ind)
+	if err != nil {
+		t.Fatalf("BuildUserPrompt: %v", err)
+	}
 
 	if strings.Contains(prompt, "likely safe") {
 		t.Error("partial auth fail with routing anomaly must NOT produce 'likely safe' hint")
@@ -89,7 +98,10 @@ func TestBuildUserPromptHintRoutingOnly(t *testing.T) {
 		},
 	}
 
-	prompt := BuildUserPrompt(tag, email, ind)
+	prompt, err := BuildUserPrompt(tag, email, ind)
+	if err != nil {
+		t.Fatalf("BuildUserPrompt: %v", err)
+	}
 
 	if strings.Contains(prompt, "very likely a legitimate email") {
 		t.Error("routing anomaly should prevent 'very likely legitimate' hint even with auth all pass")
@@ -108,7 +120,10 @@ func TestBuildUserPromptHintSoftfailCounted(t *testing.T) {
 		Sender:         indicator.SenderResult{},
 	}
 
-	prompt := BuildUserPrompt(tag, email, ind)
+	prompt, err := BuildUserPrompt(tag, email, ind)
+	if err != nil {
+		t.Fatalf("BuildUserPrompt: %v", err)
+	}
 
 	if strings.Contains(prompt, "likely safe") {
 		t.Error("softfail + dmarc fail must NOT produce 'likely safe' hint")
@@ -134,7 +149,10 @@ func TestBuildUserPromptAlertCountIncludesXMailer(t *testing.T) {
 		},
 	}
 
-	prompt := BuildUserPrompt(tag, email, ind)
+	prompt, err := BuildUserPrompt(tag, email, ind)
+	if err != nil {
+		t.Fatalf("BuildUserPrompt: %v", err)
+	}
 
 	if strings.Contains(prompt, "very likely a legitimate email") {
 		t.Error("suspicious X-Mailer should prevent 'very likely legitimate' hint")

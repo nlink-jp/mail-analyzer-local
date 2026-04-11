@@ -45,7 +45,7 @@ Defang URLs in output: example[.]com, hxxps://evil[.]site%s`, langInstruction))
 }
 
 // BuildUserPrompt creates the user prompt with nonce-tagged email data.
-func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.Indicators) string {
+func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.Indicators) (string, error) {
 	body := email.PlainTextBody()
 	if body == "" {
 		body = email.HTMLBody()
@@ -185,6 +185,10 @@ Reply-To: %s
 		body,
 	)
 
+	wrapped, err := tag.Wrap(emailData)
+	if err != nil {
+		return "", err
+	}
 	return fmt.Sprintf(`Pre-computed indicators:
 %s
 
@@ -193,6 +197,6 @@ Reply-To: %s
 %s`,
 		strings.Join(lines, "\n"),
 		hint,
-		tag.Wrap(emailData),
-	)
+		wrapped,
+	), nil
 }
