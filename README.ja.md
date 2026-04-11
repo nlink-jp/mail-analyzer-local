@@ -36,12 +36,19 @@ mail-analyzer-local --version
 
 出力はstdoutへのJSON（mail-analyzerと同一スキーマ）。
 
-## テスト済みモデル
+## 推奨モデル
 
-| モデル | Think OFF | Think ON |
-|--------|-----------|----------|
-| google/gemma-4-26b-a4b | OK | OK |
-| qwen/qwen3.5-9b | OK | OK |
+**google/gemma-4-26b-a4b（Think OFF）** — 10通の評価データセット（safe 5通、フィッシング 5通）で100%精度を達成。
+
+| モデル | サイズ | Think | 精度 |
+|--------|--------|-------|------|
+| **google/gemma-4-26b-a4b** | 26B | **OFF** | **100%** |
+| qwen/qwen3.5-35b-a3b | 35B | OFF | 90% |
+| qwen/qwen3.5-9b | 9B | OFF | 90% |
+
+**重要：メール分析ではthinkingモードを無効にすること。** Thinkモードはindicatorsの正常性を過度に推論し、フィッシング検出精度を低下させる。
+
+詳細は[モデル評価ガイド](docs/ja/model-evaluation.ja.md)を参照。
 
 ## nlk統合
 

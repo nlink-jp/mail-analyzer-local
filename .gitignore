@@ -20,3 +20,6 @@ coverage.html
 
 # Credentials
 .env
+
+# Real email samples (may contain sensitive content)
+testdata/eval/

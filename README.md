@@ -36,12 +36,19 @@ mail-analyzer-local --version
 
 Output is JSON to stdout (same schema as mail-analyzer).
 
-## Tested Models
+## Recommended Model
 
-| Model | Think OFF | Think ON |
-|-------|-----------|----------|
-| google/gemma-4-26b-a4b | OK | OK |
-| qwen/qwen3.5-9b | OK | OK |
+**google/gemma-4-26b-a4b with Think OFF** — achieved 100% accuracy on a 10-email evaluation dataset (5 safe, 5 phishing).
+
+| Model | Size | Think | Accuracy |
+|-------|------|-------|----------|
+| **google/gemma-4-26b-a4b** | 26B | **OFF** | **100%** |
+| qwen/qwen3.5-35b-a3b | 35B | OFF | 90% |
+| qwen/qwen3.5-9b | 9B | OFF | 90% |
+
+**Important: Disable thinking mode** for email analysis. Think mode consistently degrades phishing detection by over-reasoning on clean indicators.
+
+See [Model Evaluation Guide](docs/en/model-evaluation.md) for full results and analysis.
 
 ## Built with nlk
 
