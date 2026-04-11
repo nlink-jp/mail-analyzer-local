@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.3.0 (2026-04-12)
+
+### Improvements
+
+- HINT system now counts auth failures (SPF/DKIM/DMARC fail) and routing anomalies in alertCount
+- Auth-failure-aware HINT branches prevent "likely safe" hint on spoofed emails
+- 2 new unsafe eval samples added (Pairs impersonation, brand counterfeit spam)
+- Prompt builder unit tests added
+
+### Evaluation Results (12 real emails: 5 safe, 7 unsafe)
+
+| Model | Think | Accuracy |
+|-------|-------|----------|
+| google/gemma-4-26b-a4b | OFF | 100% (12/12) |
+
 ## v0.2.0 (2026-04-11)
 
 ### Improvements

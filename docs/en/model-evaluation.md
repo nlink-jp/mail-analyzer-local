@@ -1,8 +1,8 @@
 # Model Evaluation Guide
 
-> Evaluated: 2026-04-11
-> mail-analyzer-local v0.2.0 (prompt tuned for local LLMs)
-> Dataset: 10 real emails (5 safe, 5 phishing)
+> Evaluated: 2026-04-12
+> mail-analyzer-local v0.3.0 (HINT alert count fix + expanded dataset)
+> Dataset: 12 real emails (5 safe, 7 unsafe)
 
 ## Results
 
@@ -41,6 +41,16 @@ Enabling thinking/reasoning mode consistently reduces phishing detection accurac
 
 **Recommendation: Disable thinking mode** for email analysis tasks. The structured prompt + pre-computed indicators provide sufficient guidance without the model needing to reason through intermediate steps.
 
+### v0.3.0 Fix: Auth Failures in Alert Count
+
+In v0.2.0, the HINT system only counted sender/URL/attachment alerts. Emails with SPF/DKIM/DMARC failures but no other indicators received a "likely safe" hint, causing false negatives. v0.3.0 includes authentication failures and routing anomalies in the alert count, with auth-failure-aware HINT branches.
+
+Two new unsafe samples were added to the dataset:
+- **Pairs impersonation** — SPF/DKIM/DMARC all fail (p=REJECT), sent from localhost
+- **Brand counterfeit spam** — SPF fail, DKIM/DMARC pass, sent from localhost on Google Cloud
+
+Both were previously misclassified as safe by Gemma 4 and are now correctly detected.
+
 ### False Negative Pattern
 
 The most difficult phishing type for local models: emails that **pass SPF/DMARC authentication** while containing **credential harvesting links on free hosting**. The "kiwi.ne.jp password" test case was the most commonly missed, where:
@@ -68,7 +78,7 @@ Marketing emails with promotional language ("50% OFF", "limited time") are somet
 - All from legitimate commercial services
 - Contains CDN links (CloudFront, S3), tracking URLs, promotional language
 
-### Unsafe Emails (5)
-- Real phishing emails targeting Japanese users
-- Tactics: credential harvesting, fake security alerts, refund fraud
-- Mix of authentication results (some pass SPF/DMARC)
+### Unsafe Emails (7)
+- Real phishing/scam emails targeting Japanese users
+- Tactics: credential harvesting, fake security alerts, refund fraud, brand impersonation, counterfeit goods
+- Mix of authentication results (some pass SPF/DMARC, some fail all checks)

@@ -24,12 +24,14 @@ mail-analyzer-local/
 │   ├── indicator/   # Rule-based analysis (ported from mail-analyzer)
 │   ├── llm/         # OpenAI-compatible LLM client + nlk integration
 │   │   ├── client.go    # HTTP client, strip, jsonfix, validate
-│   │   └── prompt.go    # System/user prompt with nlk/guard
+│   │   ├── prompt.go    # System/user prompt with nlk/guard
+│   │   └── prompt_test.go # HINT logic unit tests
 │   ├── analyzer/    # Composite analysis (indicators + LLM → result)
 │   └── config/      # Environment variable config
-├── testdata/        # Test .eml files
+├── testdata/        # Test .eml files + eval dataset (5 safe, 7 unsafe)
 ├── docs/
-│   └── en/          # RFP document
+│   ├── en/          # RFP, model evaluation guide
+│   └── ja/          # Model evaluation guide (ja)
 ├── Makefile
 └── README.md
 ```

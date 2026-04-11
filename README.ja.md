@@ -38,7 +38,7 @@ mail-analyzer-local --version
 
 ## 推奨モデル
 
-**google/gemma-4-26b-a4b（Think OFF）** — 10通の評価データセット（safe 5通、フィッシング 5通）で100%精度を達成。
+**google/gemma-4-26b-a4b（Think OFF）** — 12通の評価データセット（safe 5通、unsafe 7通）で100%精度を達成。
 
 | モデル | サイズ | Think | 精度 |
 |--------|--------|-------|------|

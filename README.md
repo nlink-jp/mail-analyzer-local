@@ -38,7 +38,7 @@ Output is JSON to stdout (same schema as mail-analyzer).
 
 ## Recommended Model
 
-**google/gemma-4-26b-a4b with Think OFF** — achieved 100% accuracy on a 10-email evaluation dataset (5 safe, 5 phishing).
+**google/gemma-4-26b-a4b with Think OFF** — achieved 100% accuracy on a 12-email evaluation dataset (5 safe, 7 unsafe).
 
 | Model | Size | Think | Accuracy |
 |-------|------|-------|----------|
