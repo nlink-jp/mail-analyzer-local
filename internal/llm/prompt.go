@@ -127,6 +127,25 @@ func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.I
 		alertCount++
 	}
 
+	// Count authentication failures as alerts
+	authFailCount := 0
+	if auth.SPF == "fail" || auth.SPF == "softfail" {
+		authFailCount++
+	}
+	if auth.DKIM == "fail" {
+		authFailCount++
+	}
+	if auth.DMARC == "fail" {
+		authFailCount++
+	}
+	alertCount += authFailCount
+
+	// Count routing anomalies as alerts
+	alertCount += len(indicators.Routing.SuspiciousHops)
+	if indicators.Routing.XMailerSuspicious {
+		alertCount++
+	}
+
 	// Strong safety signal: authentication all pass + no sender issues + no suspicious URLs/attachments
 	authAllPass := auth.SPF == "pass" && auth.DKIM == "pass" && auth.DMARC == "pass"
 
@@ -135,6 +154,12 @@ func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.I
 		hint = "HINT: Authentication ALL PASS, sender is clean, and no suspicious URLs or attachments. This is very likely a legitimate email."
 	} else if authAllPass && senderClean && alertCount > 0 {
 		hint = fmt.Sprintf("HINT: Authentication passes but %d suspicious indicator(s) found. Analyze the email content carefully — legitimate services don't use suspicious hosting for critical links.", alertCount)
+	} else if authFailCount >= 2 {
+		hint = fmt.Sprintf("HINT: %d authentication checks FAILED. This is a strong signal of spoofing or unauthorized sending. Treat this email with high suspicion.", authFailCount)
+	} else if authFailCount == 1 && alertCount >= 2 {
+		hint = fmt.Sprintf("HINT: Authentication partially failed and %d total indicator(s) flagged. This email warrants careful scrutiny.", alertCount)
+	} else if authFailCount == 1 && alertCount == 1 {
+		hint = "HINT: One authentication check failed. This can occur with forwarding or mailing lists, but combined with other context may indicate spoofing."
 	} else if alertCount == 0 {
 		hint = "HINT: No alerts detected in pre-computed indicators. This email is likely safe."
 	} else if alertCount == 1 {
