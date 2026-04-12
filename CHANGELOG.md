@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.2 (2026-04-12)
+
+### Fixes
+
+- Update nlk to v0.5.1 — jsonfix: handle zero-width Unicode spaces and parenthesized prose
+
 ## v0.3.1 (2026-04-12)
 
 ### Security
