@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.3 (2026-05-03)
+
+### Fixes
+
+- Bump nlk to v0.5.2 — strip: ignore `<tag>` matches inside markdown inline-code spans so LLM responses that explain the literal `<think>` tag don't get truncated mid-explanation under the unclosed-tag rule.
+- Makefile: auto-detect version from git tag (no more hardcoded VERSION).
+
 ## v0.3.2 (2026-04-12)
 
 ### Fixes
