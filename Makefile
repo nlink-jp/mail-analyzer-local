@@ -53,3 +53,10 @@ test:
 
 clean:
 	rm -rf dist
+
+# Homebrew tap generation (see scripts/release-brew.mk). After `make package`,
+# `make brew` generates this formula from the built darwin-arm64 zip into the
+# local nlink-jp/homebrew-tap checkout. The package target is unchanged.
+BREW_KIND := formula
+BREW_DESC := Local-LLM email analyzer via an OpenAI-compatible API
+include scripts/release-brew.mk
