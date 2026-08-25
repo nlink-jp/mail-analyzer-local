@@ -11,6 +11,7 @@ backoff, and validation.
 ```bash
 make build        # → dist/mail-analyzer-local
 make test         # go test ./...
+make verify-release  # gate: .notarized marker + freshness (run before upload)
 go test ./...     # same without Makefile
 ```
 
