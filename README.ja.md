@@ -34,7 +34,10 @@ mail-analyzer-local --offline suspicious.eml    # ルールベースのみ（LLM
 mail-analyzer-local --version
 ```
 
-出力はstdoutへのJSON（mail-analyzerと同一スキーマ）。
+出力はstdoutへのJSON（mail-analyzerと同一スキーマ）。`.eml`・`.msg`・`winmail.dat` は
+[mailparse](https://github.com/nlink-jp/mailparse) で読み、形式は中身で判別する。パーサーとルールベースの判定は
+mail-analyzer と同じコードである。`warnings`、`authentication.raw`・`conflicting`、添付されたメールで見つかった
+URL と添付の `layer` を含むスキーマは mail-analyzer の README を見よ。
 
 ## 推奨モデル
 

@@ -1,5 +1,44 @@
 # Changelog
 
+## Unreleased
+
+The move to mailparse is done together with mail-analyzer, eml-to-jsonl and msg-to-jsonl, so the
+four read mail the same way. Changes against v0.4.0:
+
+### Changed
+
+- **The message is read by [mailparse](https://github.com/nlink-jp/mailparse) v0.2.0** instead of
+  the in-tool parsers (`net/mail` and an `.msg` reader on the community package
+  `richardlehane/mscfb`, which is no longer a dependency). mail-analyzer-local and mail-analyzer
+  share the parser and indicator code, and eml-to-jsonl and msg-to-jsonl read mail the same way.
+  - The format is recognized by content (`.eml`, `.msg`, `winmail.dat`), not by the file extension.
+  - `from` lists every From mailbox; display names that are not plain atoms are quoted
+    (`Mailbox.String()`), so a name that decodes to an address stays a name.
+  - A `.msg` gets its `date`, its Authentication-Results and its Bcc recipients (which were missing
+    or listed under To); files larger than 64 MiB are refused.
+- **Authentication: the top Authentication-Results decides** (the recipient's own server adds it;
+  a forged field sits below). Every field is kept in `authentication.raw` and given to the LLM
+  inside the untrusted-data tags; `authentication.conflicting` flags a lower field that disagrees.
+  It is information only: in 12 real messages, 10 carried several fields and all 10 disagreed
+  through honest forwarding.
+- **Sender checks run over every From, Return-Path and Reply-To mailbox**: a check fires when any
+  combination fires, so a second From or Reply-To cannot hide the first. Domains and display names
+  come from the parsed mailboxes, not from re-parsing a display string.
+- **Attached (forwarded) messages are searched**: their URLs and attachments are checked and carry
+  `layer` (a mailparse `Message.Walk` path). Sender and authentication checks stay on the outer
+  message, and the LLM sees the outer body only.
+- **URLs in text/* attachments** (a calendar invitation, say) are checked and carry `attachment`.
+- An attachment without a name has an empty `filename` (it was `"attachment"`), and a text part
+  other than text/plain and text/html (an inline text/calendar, say) is an attachment, no longer a
+  body: it appears in `indicators.attachments`, and its URLs carry `attachment`.
+
+### Added
+
+- `warnings` in the result: mailparse's warnings for the message and every attached message,
+  always an array. The LLM is given the warning codes (no message text).
+- The prompt notes a disagreeing lower Authentication-Results as a NOTE line, not counted as an
+  alert, and says where a suspicious URL or attachment was found.
+
 ## v0.4.0 (2026-07-12)
 
 ### Removed

@@ -34,7 +34,11 @@ mail-analyzer-local --offline suspicious.eml    # rule-based only, no LLM
 mail-analyzer-local --version
 ```
 
-Output is JSON to stdout (same schema as mail-analyzer).
+Output is JSON to stdout (same schema as mail-analyzer). `.eml`, `.msg` and `winmail.dat` are
+read by [mailparse](https://github.com/nlink-jp/mailparse) and recognized by content; the parser and
+the rule-based indicators are the same code as mail-analyzer's — see its README for the schema,
+including `warnings`, `authentication.raw`/`conflicting` and the `layer` of URLs and attachments
+found in attached messages.
 
 ## Recommended Model
 

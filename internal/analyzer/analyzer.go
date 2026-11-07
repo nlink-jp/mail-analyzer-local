@@ -10,6 +10,7 @@ import (
 	"github.com/nlink-jp/mail-analyzer-local/internal/indicator"
 	"github.com/nlink-jp/mail-analyzer-local/internal/llm"
 	"github.com/nlink-jp/mail-analyzer-local/internal/parser"
+	"github.com/nlink-jp/mailparse"
 )
 
 // Result is the complete analysis output.
@@ -23,6 +24,9 @@ type Result struct {
 	Date       string                `json:"date"`
 	Indicators *indicator.Indicators `json:"indicators"`
 	Judgment   *llm.Judgment         `json:"judgment"`
+	// Warnings are what the parser met and handled (mailparse warnings of
+	// the message and every nested message).
+	Warnings []mailparse.Warning `json:"warnings"`
 }
 
 // Analyze performs complete email analysis: parse → indicators → LLM → result.
@@ -54,6 +58,7 @@ func Analyze(ctx context.Context, email *parser.Email, cfg *config.Config) (*Res
 		Date:       email.Date,
 		Indicators: indicators,
 		Judgment:   judgment,
+		Warnings:   email.Warnings,
 	}, nil
 }
 
@@ -145,6 +150,7 @@ func AnalyzeOffline(email *parser.Email) *Result {
 		To:         email.To,
 		Date:       email.Date,
 		Indicators: indicators,
+		Warnings:   email.Warnings,
 		Judgment: &llm.Judgment{
 			IsSuspicious: suspicious,
 			Category:     category,

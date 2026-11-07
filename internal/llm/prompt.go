@@ -39,6 +39,11 @@ IMPORTANT decision rules:
 - However, if the email asks the user to click a link to verify/reset a password or account, AND the link points to a suspicious domain (free hosting, unfamiliar domain), classify as phishing regardless of authentication status.
 - When in doubt and no credential harvesting is involved, prefer "safe".
 
+Indicator notes:
+- Authentication comes from the top Authentication-Results header (the recipient's own server). A NOTE that a lower header disagrees is normal for forwarded mail; a sender can also forge a lower header.
+- "Parser warnings" are codes from the email parser. duplicate_field, invalid_address and mapi_header_mismatch can indicate forgery.
+- URLs and attachments marked "in attached message" come from a forwarded email, not from the outer sender.
+
 Defang URLs in output: example[.]com, hxxps://evil[.]site%s`, langInstruction))
 
 	return prompt, tag
@@ -65,6 +70,12 @@ func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.I
 		lines = append(lines, fmt.Sprintf("Authentication: SPF=%s, DKIM=%s, DMARC=%s", auth.SPF, auth.DKIM, auth.DMARC))
 	}
 
+	// A lower header that disagrees: information only, not an alert
+	// (forwarding does this honestly).
+	if auth.Conflicting {
+		lines = append(lines, "NOTE: a lower Authentication-Results header disagrees with the top one (forwarding, or a forged header)")
+	}
+
 	// Sender
 	senderClean := true
 	if indicators.Sender.FromReturnPathMismatch {
@@ -87,7 +98,7 @@ func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.I
 	suspiciousURLs := 0
 	for _, u := range indicators.URLs {
 		if u.Suspicious {
-			lines = append(lines, fmt.Sprintf("SUSPICIOUS URL: %s (%s)", u.URL, u.Reason))
+			lines = append(lines, fmt.Sprintf("SUSPICIOUS URL: %s (%s)", u.URL, withWhere(u.Reason, u.Where())))
 			suspiciousURLs++
 		}
 	}
@@ -99,7 +110,7 @@ func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.I
 	suspiciousAttach := 0
 	for _, a := range indicators.Attachments {
 		if a.Suspicious {
-			lines = append(lines, fmt.Sprintf("SUSPICIOUS ATTACHMENT: %s (%s)", a.Filename, a.Reason))
+			lines = append(lines, fmt.Sprintf("SUSPICIOUS ATTACHMENT: %s (%s)", a.Filename, withWhere(a.Reason, a.Where())))
 			suspiciousAttach++
 		}
 	}
@@ -168,13 +179,17 @@ func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.I
 		hint = fmt.Sprintf("HINT: %d indicators flagged. This email warrants careful scrutiny.", alertCount)
 	}
 
+	if len(indicators.WarningCodes) > 0 {
+		lines = append(lines, "Parser warnings: "+strings.Join(indicators.WarningCodes, ", "))
+	}
+
 	emailData := fmt.Sprintf(`Subject: %s
 From: %s
 To: %s
 Date: %s
 Return-Path: %s
 Reply-To: %s
-
+%s
 %s`,
 		email.Subject,
 		email.From,
@@ -182,6 +197,7 @@ Reply-To: %s
 		email.Date,
 		email.ReturnPath,
 		email.ReplyTo,
+		authResultLines(indicators),
 		body,
 	)
 
@@ -199,4 +215,20 @@ Reply-To: %s
 		hint,
 		wrapped,
 	), nil
+}
+
+func withWhere(reason, where string) string {
+	if where == "" {
+		return reason
+	}
+	return reason + ", " + where
+}
+
+// authResultLines writes the raw Authentication-Results fields, one per line.
+func authResultLines(indicators *indicator.Indicators) string {
+	var b strings.Builder
+	for _, f := range indicator.PromptAuthResults(indicators.Authentication.Raw) {
+		b.WriteString("Authentication-Results: " + f + "\n")
+	}
+	return b.String()
 }

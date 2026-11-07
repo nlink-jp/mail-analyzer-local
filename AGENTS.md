@@ -21,8 +21,8 @@ go test ./...     # same without Makefile
 mail-analyzer-local/
 ├── main.go
 ├── internal/
-│   ├── parser/      # EML/MSG parsing (ported from mail-analyzer)
-│   ├── indicator/   # Rule-based analysis (ported from mail-analyzer)
+│   ├── parser/      # mailparse.Message → Email (same code as mail-analyzer)
+│   ├── indicator/   # Rule-based analysis (same code as mail-analyzer)
 │   ├── llm/         # OpenAI-compatible LLM client + nlk integration
 │   │   ├── client.go    # HTTP client, strip, jsonfix, validate
 │   │   ├── prompt.go    # System/user prompt with nlk/guard
@@ -48,7 +48,14 @@ MAIL_ANALYZER_LOCAL_LANG      (optional) Output language
 
 ## Gotchas
 
-- Parser and indicator packages are copied from mail-analyzer (not shared via library)
+- **Twin of mail-analyzer**: `internal/parser`, `internal/indicator` and `internal/analyzer` are the
+  same code in both, differing only in import paths (and, in analyzer.go, the LLM call). Change them in
+  both repositories together and compare with the import paths normalized.
+- **All parsing is mailparse** (`github.com/nlink-jp/mailparse`). A parsing defect is fixed and
+  released in mailparse first, never worked around here. Addresses become text only through
+  `Mailbox.String()`.
+- **Authentication-Results: the top field decides**; a disagreeing lower field is a NOTE line in the
+  prompt, not an alert (honest forwarding produces it in most real mail).
 - LLM client uses net/http directly — no OpenAI SDK dependency
 - Local models may produce thinking tags — nlk/strip handles removal
 - Local models may produce malformed JSON — nlk/jsonfix handles repair
