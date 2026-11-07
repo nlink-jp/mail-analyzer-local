@@ -125,7 +125,7 @@ func callAPI(ctx context.Context, cfg *config.Config, reqBody chatRequest) (stri
 	if err != nil {
 		return "", fmt.Errorf("HTTP request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
