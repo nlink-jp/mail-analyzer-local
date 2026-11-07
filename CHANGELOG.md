@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.5.0 (2026-11-07)
 
 The move to mailparse is done together with mail-analyzer, eml-to-jsonl and msg-to-jsonl, so the
 four read mail the same way. Changes against v0.4.0:
