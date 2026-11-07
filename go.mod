@@ -3,7 +3,7 @@ module github.com/nlink-jp/mail-analyzer-local
 go 1.26.2
 
 require (
-	github.com/nlink-jp/mailparse v0.2.0
+	github.com/nlink-jp/mailparse v0.3.0
 	github.com/nlink-jp/nlk v0.5.2
 )
 

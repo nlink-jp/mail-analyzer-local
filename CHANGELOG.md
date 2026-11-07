@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **mailparse v0.3.0.** An address field that does not parse as RFC 5322 is
+  now read by a lexer and a small grammar: every address in it is kept (a
+  missing comma no longer drops one), and none is made up from a comment, a
+  quoted display name or words glued together. A crafted .msg whose compressed
+  RTF nests `\field` groups no longer panics, and unclosed parentheses in an
+  address field no longer take quadratic time. Well-formed mail reads as
+  before (18 real messages compared, no difference).
+
 ## v0.5.0 (2026-11-07)
 
 The move to mailparse is done together with mail-analyzer, eml-to-jsonl and msg-to-jsonl, so the

@@ -1,5 +1,5 @@
-github.com/nlink-jp/mailparse v0.2.0 h1:4KzwIdMkwZpZqPshBxZHC504DI1jVWlfjwWCYs5Km90=
-github.com/nlink-jp/mailparse v0.2.0/go.mod h1:rlv1mP9iSw2LSTYEc/BCqdn2fwYwfnnjyUqWTBWnQtc=
+github.com/nlink-jp/mailparse v0.3.0 h1:ppiYHGWToabO9q/4M/RBiDHtGGe0FkMJVHZrsMfpV3M=
+github.com/nlink-jp/mailparse v0.3.0/go.mod h1:rlv1mP9iSw2LSTYEc/BCqdn2fwYwfnnjyUqWTBWnQtc=
 github.com/nlink-jp/nlk v0.5.2 h1:HsgLn6Cg7ZgMCUeQBZDzVSV02KBosk7sKJs9GobJL0k=
 github.com/nlink-jp/nlk v0.5.2/go.mod h1:+zmZRbWbzaYBp4MiMq8qrR0zkF3NqyMDqSWjYg04a/k=
 golang.org/x/net v0.52.0 h1:He/TN1l0e4mmR3QqHMT2Xab3Aj3L9qjbhRm78/6jrW0=
