@@ -29,12 +29,13 @@ Analyze the email AND the pre-computed indicators provided. Return ONLY valid JS
 Categories: phishing, spam, malware-delivery, bec, scam, safe
 
 IMPORTANT decision rules:
-- If SPF/DKIM/DMARC all PASS and sender has no mismatch, the email is almost certainly SAFE regardless of other indicators.
+- If SPF/DKIM/DMARC all PASS and no sender ALERT is listed, the email is almost certainly SAFE regardless of other indicators.
+- Passing authentication proves only that the mail came from its actual sending domain, not that the sender is who the display name claims. If a display name ALERT is listed and the name shows another organization's domain or address, that is impersonation: classify as phishing even when authentication passes and the body looks harmless. It is not impersonation when the name is the same brand as the sending domain (example.com and example.co.jp) or is plainly not a website (a team name such as Sales.Team).
 - Marketing emails commonly use CDN URLs (CloudFront, S3, Azure) and tracking links. These are NOT suspicious when authentication passes.
 - Urgency language ("limited time", "expires soon", "act now") is normal in marketing. Only suspicious when combined with credential requests.
 - Missing SPF/DKIM/DMARC alone does NOT make an email suspicious. Many legitimate emails lack these.
 - SPF/DMARC failure alone does NOT mean phishing. Forwarded mail and mailing lists commonly fail.
-- Only classify as phishing when there is CLEAR evidence: sender domain mismatch + credential harvesting URL + deceptive content.
+- Apart from display name impersonation, only classify as phishing when there is CLEAR evidence: sender domain mismatch + credential harvesting URL + deceptive content.
 - Newsletters, notifications, promotions, and marketing emails are SAFE.
 - However, if the email asks the user to click a link to verify/reset a password or account, AND the link points to a suspicious domain (free hosting, unfamiliar domain), classify as phishing regardless of authentication status.
 - When in doubt and no credential harvesting is involved, prefer "safe".
@@ -83,7 +84,7 @@ func BuildUserPrompt(tag guard.Tag, email *parser.Email, indicators *indicator.I
 		senderClean = false
 	}
 	if indicators.Sender.DisplayNameSpoofing {
-		lines = append(lines, "ALERT: Display name spoofing detected")
+		lines = append(lines, "ALERT: Display name shows an email address or the domain of another organization (possible spoofing)")
 		senderClean = false
 	}
 	if indicators.Sender.ReplyToDivergence {

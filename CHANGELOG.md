@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **The LLM no longer clears a spoofed display name because authentication passed.** The system
+  prompt said that mail passing SPF/DKIM/DMARC with no sender mismatch is almost certainly safe, and
+  the model applied that to `display_name_spoofing` as well. It now says that authentication proves
+  only the actual sending domain, and that a display name showing another organization is
+  impersonation. The alert says what the flag means. On Qwen3.6-35B, three synthetic spoofs were
+  judged suspicious 9 of 9 times (3 of 9 before); the 5 real safe mails and 2 synthetic legitimate
+  controls stayed safe in all runs. The real phishing mails without this flag did not change: the
+  two that varied, run 10 times each, were flagged 14 of 20 times with either prompt.
+
 ## v0.6.0 (2026-11-08)
 
 ### Changed

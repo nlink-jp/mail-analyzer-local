@@ -70,11 +70,29 @@ func TestBuildUserPromptDisplayNameSpoofingAuthPass(t *testing.T) {
 		t.Fatalf("BuildUserPrompt: %v", err)
 	}
 
-	if !strings.Contains(prompt, "ALERT: Display name spoofing detected") {
+	if !strings.Contains(prompt, "ALERT: Display name shows an email address or the domain of another organization") {
 		t.Error("user prompt lacks the display name alert")
 	}
 	if strings.Contains(prompt, "very likely a legitimate email") || strings.Contains(prompt, "likely safe") {
 		t.Errorf("a spoofed display name must not be hinted safe:\n%s", prompt)
+	}
+}
+
+// Passing authentication must not clear a display name spoof: measured on
+// Qwen3.6-35B, the earlier rules made the model call such mail safe.
+func TestBuildSystemPromptDisplayNameImpersonation(t *testing.T) {
+	prompt, _ := BuildSystemPrompt("")
+	for _, want := range []string{
+		"all PASS and no sender ALERT is listed",
+		"not that the sender is who the display name claims",
+		"Apart from display name impersonation, only classify as phishing",
+	} {
+		if !strings.Contains(prompt, want) {
+			t.Errorf("system prompt lacks %q", want)
+		}
+	}
+	if strings.Contains(prompt, "all PASS and sender has no mismatch") {
+		t.Error("system prompt still clears mail on authentication and address alone")
 	}
 }
 
