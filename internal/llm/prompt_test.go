@@ -73,7 +73,7 @@ func TestBuildUserPromptDisplayNameSpoofingAuthPass(t *testing.T) {
 	if !strings.Contains(prompt, "ALERT: Display name spoofing detected") {
 		t.Error("user prompt lacks the display name alert")
 	}
-	if strings.Contains(prompt, "likely legitimate") || strings.Contains(prompt, "likely safe") {
+	if strings.Contains(prompt, "very likely a legitimate email") || strings.Contains(prompt, "likely safe") {
 		t.Errorf("a spoofed display name must not be hinted safe:\n%s", prompt)
 	}
 }
