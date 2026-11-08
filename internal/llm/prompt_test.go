@@ -55,6 +55,29 @@ func TestBuildUserPromptHintAuthFail(t *testing.T) {
 	}
 }
 
+// A display name spoof under passing authentication must not get the "likely
+// safe" hint: that is the shape of mail the indicator exists for.
+func TestBuildUserPromptDisplayNameSpoofingAuthPass(t *testing.T) {
+	_, tag := BuildSystemPrompt("")
+	email := &parser.Email{Subject: "s", From: "f"}
+	ind := &indicator.Indicators{
+		Authentication: indicator.AuthResult{SPF: "pass", DKIM: "pass", DMARC: "pass"},
+		Sender:         indicator.SenderResult{DisplayNameSpoofing: true},
+	}
+
+	prompt, err := BuildUserPrompt(tag, email, ind)
+	if err != nil {
+		t.Fatalf("BuildUserPrompt: %v", err)
+	}
+
+	if !strings.Contains(prompt, "ALERT: Display name spoofing detected") {
+		t.Error("user prompt lacks the display name alert")
+	}
+	if strings.Contains(prompt, "likely legitimate") || strings.Contains(prompt, "likely safe") {
+		t.Errorf("a spoofed display name must not be hinted safe:\n%s", prompt)
+	}
+}
+
 func TestBuildUserPromptHintAuthPartialFail(t *testing.T) {
 	_, tag := BuildSystemPrompt("")
 	email := &parser.Email{
