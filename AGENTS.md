@@ -11,6 +11,7 @@ backoff, and validation.
 ```bash
 make build        # → dist/mail-analyzer-local
 make test         # go test ./...
+make vuln            # govulncheck over the build; `make package` runs it first and stops on a finding
 make verify-release  # gate: notarized, fresh, runs at this version, clean linux archives (run before upload)
 go test ./...     # same without Makefile
 ```
