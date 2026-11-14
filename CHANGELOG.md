@@ -99,6 +99,37 @@ four read mail the same way. Changes against v0.4.0:
 - The prompt notes a disagreeing lower Authentication-Results as a NOTE line, not counted as an
   alert, and says where a suspicious URL or attachment was found.
 
+### Fixed
+
+- **`make verify-release` now fails closed.** Its last block chained unzip, the
+  packaged binary's `--version` and `spctl` with `&&` and ended the whole chain
+  in `|| true`, so a zip that did not unpack or a binary that did not run exited
+  0 and the upload proceeded. Each step is now judged on its own, the packaged
+  binary's `--version` must contain the tag being released, and only the
+  informational `spctl` line may be ignored. Matches the org template
+  (CONVENTIONS.md §Code Signing → Verifying a release).
+- **The Linux archives no longer carry macOS file metadata.** macOS `tar` wrote
+  each bundled file's extended attributes (`com.apple.provenance`, and a Dropbox
+  attribute where the tree is synced) into the `.tar.gz` twice: as AppleDouble
+  `._` members, which GNU tar extracts as stray `._<name>` files beside the real
+  ones, and as `LIBARCHIVE.xattr.*` / `SCHILY.xattr.*` pax headers, which it
+  reports as unknown keywords. `make package` now archives with
+  `COPYFILE_DISABLE=1 tar --no-xattrs`; each setting stops one of the two.
+  Archives already published still carry them; the files themselves are
+  unaffected.
+
+### Internal
+
+- `make verify-release` also judges each Linux archive: no AppleDouble or other
+  macOS metadata members — listed with `--options 'tar:!mac-ext'`, because a
+  plain macOS listing folds `._` members away — no extended attributes as pax
+  headers, and exactly the canonical binary, `README.md` and `LICENSE`, compared
+  in the C locale.
+- The Linux-archive check in `make verify-release` reads each archive's pax
+  headers with Python's `tarfile` instead of grepping the decompressed stream,
+  which also matched file text that names the keywords (a bundled CHANGELOG,
+  for one).
+
 ## v0.4.0 (2026-07-12)
 
 ### Removed
@@ -229,36 +260,3 @@ Initial release.
 
 - google/gemma-4-26b-a4b (think ON/OFF)
 - qwen/qwen3.5-9b (think ON/OFF)
-## [Unreleased]
-
-### Fixed
-
-- **`make verify-release` now fails closed.** Its last block chained unzip, the
-  packaged binary's `--version` and `spctl` with `&&` and ended the whole chain
-  in `|| true`, so a zip that did not unpack or a binary that did not run exited
-  0 and the upload proceeded. Each step is now judged on its own, the packaged
-  binary's `--version` must contain the tag being released, and only the
-  informational `spctl` line may be ignored. Matches the org template
-  (CONVENTIONS.md §Code Signing → Verifying a release).
-- **The Linux archives no longer carry macOS file metadata.** macOS `tar` wrote
-  each bundled file's extended attributes (`com.apple.provenance`, and a Dropbox
-  attribute where the tree is synced) into the `.tar.gz` twice: as AppleDouble
-  `._` members, which GNU tar extracts as stray `._<name>` files beside the real
-  ones, and as `LIBARCHIVE.xattr.*` / `SCHILY.xattr.*` pax headers, which it
-  reports as unknown keywords. `make package` now archives with
-  `COPYFILE_DISABLE=1 tar --no-xattrs`; each setting stops one of the two.
-  Archives already published still carry them; the files themselves are
-  unaffected.
-
-### Internal
-
-- `make verify-release` also judges each Linux archive: no AppleDouble or other
-  macOS metadata members — listed with `--options 'tar:!mac-ext'`, because a
-  plain macOS listing folds `._` members away — no extended attributes as pax
-  headers, and exactly the canonical binary, `README.md` and `LICENSE`, compared
-  in the C locale.
-- The Linux-archive check in `make verify-release` reads each archive's pax
-  headers with Python's `tarfile` instead of grepping the decompressed stream,
-  which also matched file text that names the keywords (a bundled CHANGELOG,
-  for one).
-
