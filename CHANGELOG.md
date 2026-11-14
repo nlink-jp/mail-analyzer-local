@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.6.2 (2026-11-14)
+
+### Security
+
+- **`golang.org/x/net` is updated from v0.52.0 to v0.62.0 and
+  `golang.org/x/text` from v0.36.0 to v0.43.0** (mailparse v0.3.1 requires the
+  same). The sender check passes the display name of the From field — text
+  the sender writes — to `x/net/idna`, which hands it to
+  `x/text/unicode/norm`. GO-2026-5026 (a Punycode label that decodes to plain
+  ASCII, such as `xn--example-`, is accepted as a domain) and GO-2026-5970 (an
+  endless loop on invalid UTF-8) are in those functions. Whether a crafted
+  display name could in fact stall an analysis was not tested; the update
+  removes the question. x/net's HTTP/2 is not part of this build: the
+  connection to the local LLM uses the standard library.
+
+### Changed
+
+- **Building from source needs Go 1.27.4 or later** (`go.mod`; it was 1.26.2),
+  the release whose standard library carries the fixes published so far.
+- **`make package` runs the vulnerability check first** (`make vuln`), so a
+  release cannot be built past a finding.
+
 ## v0.6.1 (2026-11-08)
 
 ### Changed
