@@ -1,8 +1,8 @@
-github.com/nlink-jp/mailparse v0.3.0 h1:ppiYHGWToabO9q/4M/RBiDHtGGe0FkMJVHZrsMfpV3M=
-github.com/nlink-jp/mailparse v0.3.0/go.mod h1:rlv1mP9iSw2LSTYEc/BCqdn2fwYwfnnjyUqWTBWnQtc=
+github.com/nlink-jp/mailparse v0.3.1 h1:ZnBhxrbcF9E2v93ltJ6nLOkcio/4bC+td6sw1U2xmC8=
+github.com/nlink-jp/mailparse v0.3.1/go.mod h1:B5X2YwGA9HjfHdkI7Qffr89aTrWFHajLlw8xj/i0GqQ=
 github.com/nlink-jp/nlk v0.5.2 h1:HsgLn6Cg7ZgMCUeQBZDzVSV02KBosk7sKJs9GobJL0k=
 github.com/nlink-jp/nlk v0.5.2/go.mod h1:+zmZRbWbzaYBp4MiMq8qrR0zkF3NqyMDqSWjYg04a/k=
-golang.org/x/net v0.52.0 h1:He/TN1l0e4mmR3QqHMT2Xab3Aj3L9qjbhRm78/6jrW0=
-golang.org/x/net v0.52.0/go.mod h1:R1MAz7uMZxVMualyPXb+VaqGSa3LIaUqk0eEt3w36Sw=
-golang.org/x/text v0.36.0 h1:JfKh3XmcRPqZPKevfXVpI1wXPTqbkE5f7JA92a55Yxg=
-golang.org/x/text v0.36.0/go.mod h1:NIdBknypM8iqVmPiuco0Dh6P5Jcdk8lJL0CUebqK164=
+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
